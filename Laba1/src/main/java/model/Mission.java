@@ -1,9 +1,12 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)   // игнорирует лишние поля
 public class Mission {
 
     public enum Outcome {
@@ -64,7 +67,8 @@ public class Mission {
     public void setDamageCost(long damageCost) { 
         this.damageCost = damageCost; 
     }
-
+    
+    @JsonProperty("comment")
     public String getNote() { 
         return note; 
     }
@@ -91,6 +95,16 @@ public class Mission {
 
     public List<Sorcerer> getSorcerers() {
         return new ArrayList<>(sorcerers);
+    }
+    
+    public void setSorcerers(List<Sorcerer> sorcerers) {
+        this.sorcerers.clear();
+        if (sorcerers != null) this.sorcerers.addAll(sorcerers);
+    }
+
+    public void setTechniques(List<Technique> techniques) {
+        this.techniques.clear();
+        if (techniques != null) this.techniques.addAll(techniques);
     }
 
     public List<Technique> getTechniques() {
