@@ -15,7 +15,7 @@ public class JsonMissionParser implements MissionParser {
         try {
             return mapper.readValue(file, Mission.class);
         } catch (Exception e) {
-            throw new MissionParseException("Ошибка при разборе JSON-файла: " + file.getName());
+            throw new MissionParseException("Ошибка при разборе JSON-файла: " + file.getName(), e);
         }
     }
 }
