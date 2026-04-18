@@ -1,24 +1,24 @@
 package service;
 
-import java.io.File;
+import gui.reports.MissionReportStrategy;
+import gui.reports.ReportStrategyRegistry;
 import model.Mission;
 import parser.MissionParseException;
-import parser.MissionParser;
-import parser.MissionParserFactory;
+import parser.MissionParserChain;
 
-public class MissionService {
+import java.io.File;
 
-    public Mission loadMission(File file) throws MissionParseException {
-        if (file == null || !file.exists()) {
-            throw new MissionParseException("Файл не существует или не указан");
-        }
+public class MissionService implements FacadeMissionService {
 
-        MissionParser parser = MissionParserFactory.getParser(file);
-        return parser.parse(file);
+    @Override
+    public Mission parse(File file) throws MissionParseException {
+        return MissionParserChain.parse(file);
     }
 
-    public Mission loadMission(String filePath) throws MissionParseException {
-        return loadMission(new File(filePath));
+    @Override
+    public String generateReport(Mission mission, String reportType) {
+        if (mission == null) return "";
+        MissionReportStrategy strategy = ReportStrategyRegistry.getStrategyByName(reportType);
+        return strategy.generate(mission);
     }
-
 }
