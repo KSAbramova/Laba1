@@ -4,7 +4,9 @@ public class Technique {
 
     public enum Type {
         INNATE,
-        SHIKIGAMI
+        SHIKIGAMI,
+        BODY,
+        WEAPON
     }
 
     private String name;
@@ -46,7 +48,7 @@ public class Technique {
         this.owner = owner;
     }
 
-    public long getDamage() {
+    public Long getDamage() {
         return damage;
     }
 
