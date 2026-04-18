@@ -1,79 +1,67 @@
 package gui;
 
+import gui.components.FileOpenButton;
+import gui.components.ReportTypeSelector;
+import gui.view.MissionView;
+import gui.view.JTextAreaMissionView;
+import service.FacadeMissionService;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import model.*;
-import parser.MissionParseException;
-import service.MissionService;
 
 public class MissionAnalyzerGUI extends JFrame {
-    private final JTextArea displayArea;
-    private final MissionService service = new MissionService();
 
-    public MissionAnalyzerGUI() {
-        setTitle("Локальный анализатор миссий");
+    private final MissionPresenter presenter;
+
+    private final JTextArea textArea;
+    private final FileOpenButton openButton;
+    private final ReportTypeSelector reportTypeSelector;
+
+    public MissionAnalyzerGUI(FacadeMissionService missionService) {
+        this.textArea = createTextArea();
+
+        MissionView view = new JTextAreaMissionView(textArea);
+        this.presenter = new MissionPresenter(view, missionService);
+
+        this.openButton = new FileOpenButton(presenter);
+        this.reportTypeSelector = new ReportTypeSelector(presenter);
+
+        setupWindow();
+        setupLayout();
+    }
+
+    private JTextArea createTextArea() {
+        JTextArea area = new JTextArea();
+        area.setEditable(false);
+        area.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        return area;
+    }
+
+    private void setupWindow() {
+        setTitle("Анализатор миссий — ЛР №2");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 500);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
+    }
 
-        JButton openBtn = new JButton("Открыть файл миссии (.txt / .json / .xml)");
-        openBtn.addActionListener(e -> openFile());
-
-        displayArea = new JTextArea();
-        displayArea.setEditable(false);
-        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-
+    private void setupLayout() {
         setLayout(new BorderLayout());
-        add(openBtn, BorderLayout.NORTH);
-        add(new JScrollPane(displayArea), BorderLayout.CENTER);
+
+        JPanel topPanel = createTopPanel();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        add(topPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
-    private void openFile() {
-        JFileChooser chooser = new JFileChooser();
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            try {
-                Mission m = service.loadMission(file);
-                showMission(m);
-            } catch (MissionParseException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Ошибка парсинга:\n" + ex.getMessage(),
-                        "Ошибка", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+    private JPanel createTopPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        panel.add(openButton);
+        panel.add(new JLabel("Тип отчёта:"));
+        panel.add(reportTypeSelector);
+        return panel;
     }
 
-    private void showMission(Mission m) {
-        String text = " Миссия: " + m.getMissionId() + "\n\n" +
-                      "Дата: " + m.getDate() + "\n" +
-                      "Локация: " + m.getLocation() + "\n" +
-                      "Исход: " + m.getOutcome() + "\n" +
-                      "Ущерб: " + m.getDamageCost() + "\n\n";
-
-        if (m.getNote() != null) {
-            text += "Примечание: " + m.getNote() + "\n\n";
-        }
-
-        Curse c = m.getCurse();
-        text += "Проклятие:\n" +
-                " • " + c.getName() + " (" + c.getThreatLevel() + ")\n\n" +
-                "Маги (" + m.getSorcerersSize() + "):\n";
-
-        for (Sorcerer s : m.getSorcerers()) {
-            text += " • " + s.getName() + " — " + s.getRank() + "\n";
-        }
-
-        text += "\n" +
-                "Техники (" + m.geTechniqueSize() + "):\n";
-
-        for (Technique t : m.getTechniques()) {
-            text += " • " + t.getName() +
-                    " (" + t.getType() +
-                    ", владелец: " + t.getOwner() +
-                    ", урон: " + t.getDamage() + ")\n";
-        }
-
-        displayArea.setText(text);
-    }
 }
