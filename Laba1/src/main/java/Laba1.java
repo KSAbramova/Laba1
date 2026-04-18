@@ -1,5 +1,7 @@
 import gui.MissionAnalyzerGUI;
 import javax.swing.SwingUtilities;
+import service.FacadeMissionService;
+import service.MissionService;
 
 /**
  *
@@ -8,8 +10,7 @@ import javax.swing.SwingUtilities;
 
 public class Laba1 {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new MissionAnalyzerGUI().setVisible(true);
-        });
+        FacadeMissionService service = new MissionService();
+        SwingUtilities.invokeLater(() -> new MissionAnalyzerGUI(service).setVisible(true));
     }
 }
