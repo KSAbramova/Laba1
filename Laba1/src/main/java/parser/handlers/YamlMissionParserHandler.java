@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class YamlMissionParserHandler extends BaseMissionParser {
 
+    private final MissionDirector director = new MissionDirector();
+    
     @Override
     public boolean canHandle(File file) {
         String name = file.getName().toLowerCase();
@@ -26,10 +28,11 @@ public class YamlMissionParserHandler extends BaseMissionParser {
         try {
             Yaml yaml = new Yaml();
             Map<String, Object> data = yaml.load(new FileInputStream(file));
-
+            
             ConcreteMissionBuilder builder = new ConcreteMissionBuilder();
-            builder.createNewMission();
 
+            builder.createNewMission();
+            
             parseBasicFields(data, builder);
             parseCurse(data, builder);
             parseSorcerers(data, builder);
@@ -42,7 +45,7 @@ public class YamlMissionParserHandler extends BaseMissionParser {
             parseOperationTimeline(data, builder);
             parseListFields(data, builder);
 
-            return builder.getMission();
+            return director.constructFromBuilder(builder);
         } catch (Exception e) {
             throw new MissionParseException("Ошибка при разборе YAML-файла: " + file.getName(), e);
         }
@@ -79,7 +82,7 @@ public class YamlMissionParserHandler extends BaseMissionParser {
         }
         if (data.containsKey("note") || data.containsKey("comment")) {
             String note = (String) data.getOrDefault("note", data.get("comment"));
-            builder.buildNote(note);
+            if (note != null) builder.buildNote(note);
         }
     }
 

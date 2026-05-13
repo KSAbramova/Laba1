@@ -10,6 +10,8 @@ import java.time.LocalDate;
 
 public class XmlMissionParserHandler extends BaseMissionParser {
 
+    private final MissionDirector director = new MissionDirector();
+    
     @Override
     public boolean canHandle(File file) {
         return file.getName().toLowerCase().endsWith(".xml");
@@ -34,7 +36,7 @@ public class XmlMissionParserHandler extends BaseMissionParser {
                 }
             }
 
-            return builder.getMission();
+            return director.constructFromBuilder(builder);
 
         } catch (Exception e) {
             throw new MissionParseException("Ошибка при разборе XML-файла: " + file.getName(), e);

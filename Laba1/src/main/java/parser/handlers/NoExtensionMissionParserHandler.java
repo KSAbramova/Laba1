@@ -9,6 +9,8 @@ import java.time.LocalDate;
 
 public class NoExtensionMissionParserHandler extends BaseMissionParser {
 
+    private final MissionDirector director = new MissionDirector();
+    
     @Override
     public boolean canHandle(File file) {
         String name = file.getName().toLowerCase();
@@ -36,7 +38,7 @@ public class NoExtensionMissionParserHandler extends BaseMissionParser {
                 }
             }
 
-            return builder.getMission();
+            return director.constructFromBuilder(builder);
 
         } catch (Exception e) {
             throw new MissionParseException("Ошибка при разборе файла без формата: " + file.getName(), e);

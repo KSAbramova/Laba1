@@ -3,10 +3,8 @@ package model;
 public abstract class MissionBuilder {
 
     protected Mission mission;
-
-    public void createNewMission() {
-        mission = new Mission();
-    }
+    
+    public abstract void createNewMission();
 
     public abstract void buildMissionId(String missionId);
     public abstract void buildDate(java.time.LocalDate date);
@@ -24,7 +22,7 @@ public abstract class MissionBuilder {
     public abstract void addSorcerer(Sorcerer sorcerer);
     public abstract void addTechnique(Technique technique);
     public abstract void addOperationTimeline(OperationTimeline timeline);
-    
+
     public abstract void addOperationTag(String tag);
     public abstract void addSupportUnit(String unit);
     public abstract void addRecommendation(String rec);

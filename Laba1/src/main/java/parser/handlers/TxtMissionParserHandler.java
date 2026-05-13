@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class TxtMissionParserHandler extends BaseMissionParser {
 
+    private final MissionDirector director = new MissionDirector();
+    
     @Override
     public boolean canHandle(File file) {
         return file.getName().toLowerCase().endsWith(".txt");
@@ -43,7 +45,7 @@ public class TxtMissionParserHandler extends BaseMissionParser {
                 }
             }
 
-            return builder.getMission();
+            return director.constructFromBuilder(builder);
 
         } catch (Exception e) {
             throw new MissionParseException("Ошибка при разборе TXT-файла: " + file.getName(), e);
